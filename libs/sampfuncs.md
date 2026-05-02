@@ -203,13 +203,14 @@ end
 
 ---
 
-### Send chat message via RPC (ID 101)
-Sends a chat message directly through RPC instead of the normal chat input.
+### Send chat message via RPC
+Sends a chat message directly through RPC instead of the normal chat input.  
+> ⚠️ Use the constant `RPC_CHAT` from SAMPFUNCS instead of a hardcoded number — the numeric ID may vary between SA-MP builds.
 ```lua
 local function sendChatRPC(message)
     local bs = raknetNewBitStream()
     raknetBitStreamWriteString(bs, message)
-    raknetEmitRpc(101, bs)
+    raknetEmitRpc(RPC_CHAT, bs)  -- use constant, not hardcoded number
     raknetDeleteBitStream(bs)
 end
 ```
@@ -234,7 +235,19 @@ end
 - Always delete the bitstream after use to avoid memory leaks
 - Field write order must exactly match the RPC definition (see `rpc/rpc_ids.md`)
 - `raknetEmitRpc` sends to the **server** — the server then replicates to other clients
+- Prefer RPC constants (`RPC_CHAT`, `RPC_APPLYANIMATION`) over hardcoded numbers when available
 - Works on SA-MP 0.3.7-R1 through R5
+
+---
+
+## Source & credits
+
+SAMPFUNCS is developed by **BlastHack Team**.  
+Download and official thread: [blast.hk/attachments/22939](https://www.blast.hk/attachments/22939/)
+
+The bitstream function names and behavior documented here are verified against:
+- [github.com/THE-FYP/SAMP.Lua/blob/master/samp/raknet.lua](https://github.com/THE-FYP/SAMP.Lua/blob/master/samp/raknet.lua)
+- [github.com/THE-FYP/SAMP.Lua/blob/master/samp/events/core.lua](https://github.com/THE-FYP/SAMP.Lua/blob/master/samp/events/core.lua)
 
 ---
 
