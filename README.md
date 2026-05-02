@@ -13,10 +13,10 @@
 
 ## About MST Community
 
-**Modding Samp Team** es una comunidad en línea dedicada a la modificación avanzada de GTA San Andreas y SA-MP.
+**Modding Samp Team** is an online community dedicated to advanced GTA San Andreas and SA-MP modding.
 
 - 💬 Discord: [discord.com/invite/mst-community-1257189867020881962](https://discord.com/invite/mst-community-1257189867020881962)
-- 👥 3500+ miembros
+- 👥 3500+ members
 
 ---
 
