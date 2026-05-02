@@ -42,7 +42,7 @@ Fires when the player sends a chat message.
 function sampev.onSendChat(message)
     print("Player sent: " .. message)
     -- return false to block the message
-    -- return {message = "replaced text"} to change it
+    -- return {"replaced text"} to change it (positional table, NOT {message = "..."})
 end
 ```
 | Parameter | Type   | Description          |
@@ -63,7 +63,7 @@ end
 ```
 | Parameter | Type   | Description                  |
 |-----------|--------|------------------------------|
-| command   | string | Full command string with `/` |
+| command   | string | Full command string with `/` (string32) |
 
 ---
 
@@ -77,17 +77,17 @@ end
 
 ---
 
-### `onSendEnterVehicle(vehicleId, isPassenger)`
+### `onSendEnterVehicle(vehicleId, passenger)`
 Fires when the player attempts to enter a vehicle.
 ```lua
-function sampev.onSendEnterVehicle(vehicleId, isPassenger)
+function sampev.onSendEnterVehicle(vehicleId, passenger)
     print("Entering vehicle: " .. vehicleId)
 end
 ```
 | Parameter   | Type    | Description                        |
 |-------------|---------|------------------------------------|
-| vehicleId   | number  | Vehicle ID                         |
-| isPassenger | boolean | true if entering as passenger      |
+| vehicleId   | number  | Vehicle ID (uint16)                |
+| passenger   | boolean | true if entering as passenger (bool8) |
 
 ---
 
@@ -101,19 +101,19 @@ end
 
 ---
 
-### `onSendDialogResponse(dialogId, buttonId, listboxId, input)`
+### `onSendDialogResponse(dialogId, button, listboxId, input)`
 Fires when the player responds to a dialog box.
 ```lua
-function sampev.onSendDialogResponse(dialogId, buttonId, listboxId, input)
-    print(string.format("Dialog %d: button=%d input=%s", dialogId, buttonId, input))
+function sampev.onSendDialogResponse(dialogId, button, listboxId, input)
+    print(string.format("Dialog %d: button=%d input=%s", dialogId, button, input))
 end
 ```
 | Parameter  | Type   | Description                          |
 |------------|--------|--------------------------------------|
-| dialogId   | number | ID of the dialog                     |
-| buttonId   | number | 0 = left button, 1 = right button    |
-| listboxId  | number | Selected row index (list dialogs)    |
-| input      | string | Text input (input dialogs)           |
+| dialogId   | number | ID of the dialog (int16)             |
+| button     | number | 0 = left button, 1 = right button (int8) |
+| listboxId  | number | Selected row index (int16)           |
+| input      | string | Text input (string8)                 |
 
 ---
 
@@ -243,19 +243,33 @@ end
 
 ## Modifying event data
 
-You can override values by returning a table with the fields you want to change:
+samp.events uses **positional tables** to override values — NOT key-value tables.  
+Return a table with values in the **same order as the function parameters**.
+
+> Source: [github.com/THE-FYP/SAMP.Lua](https://github.com/THE-FYP/SAMP.Lua) README
 
 ```lua
 -- Change the text of every server message to uppercase
+-- onServerMessage(color, text) → return {color, newText}
 function sampev.onServerMessage(color, text)
-    return {text = text:upper()}
+    return {color, text:upper()}  -- positional: {color, text}
 end
 
 -- Replace chat message before it reaches the server
+-- onSendChat(message) → return {newMessage}
 function sampev.onSendChat(message)
-    return {message = message .. " :)"}
+    return {message .. " :)"}  -- positional: {message}
+end
+
+-- Change dialog text before it shows
+-- onShowDialog(dialogId, type, title, button1, button2, text)
+function sampev.onShowDialog(dialogId, dialogType, title, button1, button2, text)
+    return {dialogId, dialogType, title, button1, button2, "Custom: " .. text}
 end
 ```
+
+> ⚠️ **Wrong:** `return {text = text:upper()}` — key-value tables are NOT supported by samp.events  
+> ✅ **Correct:** `return {color, text:upper()}` — positional order matching parameters
 
 ---
 
@@ -289,7 +303,20 @@ end
 | `require 'samp/events'` | `require 'samp.events'` |
 | `sampev.onSendChat = function()` | `function sampev.onSendChat()` |
 | Returning `nil` to block | Return `false` explicitly |
+| `return {text = "new"}` to modify | `return {"new"}` — positional table |
 | Using `sampev.emitOutcomingRpc()` | Use `raknetEmitRpc()` from SAMPFUNCS |
+
+---
+
+## Source & credits
+
+This documentation is based on the official source code of **SAMP.Lua by THE-FYP / BlastHack Team**:
+
+- Full event list: [github.com/THE-FYP/SAMP.Lua/blob/master/samp/events.lua](https://github.com/THE-FYP/SAMP.Lua/blob/master/samp/events.lua)
+- Outgoing RPC field layouts: [github.com/THE-FYP/SAMP.Lua/blob/master/samp/events.lua](https://github.com/THE-FYP/SAMP.Lua/blob/master/samp/events.lua)
+- README with usage examples: [github.com/THE-FYP/SAMP.Lua/blob/master/README.md](https://github.com/THE-FYP/SAMP.Lua/blob/master/README.md)
+
+> For the complete list of all events, read `events.lua` directly — it is the authoritative source.
 
 ---
 
