@@ -1,54 +1,59 @@
-# SAMP.Lua
-SAMP.Lua is a lua library for MoonLoader that adds some features to make SA:MP modding simpler.
+# lib/
 
-Currently this library is work in progress. At this moment the only implemented module is SAMP.Events.
+This folder contains real `.lua` library files from the SA-MP/MoonLoader community.
 
-## SAMP.Events
-Gives ability to handle SA:MP incoming and outcoming low-level network packets by very easy way.
+Drop the contents of this folder directly into your `moonloader/lib/` directory to use them in your scripts.
 
-### Usage
-```lua
-local sampev = require 'samp.events'
+---
 
--- intercept outgoing chat messages
-function sampev.onSendChat(msg)
-  print('You said: ' .. msg)
-end
-```
-You can rewrite data. Just return all arguments in the right order within a table.
-```lua
-function sampev.onSendChat(msg)
-  return {'I said: ' .. msg}
-end
-```
-You can also interrupt processing any packets by returning `false`.
-```lua
-function sampev.onSetPlayerPos(position)
-  -- prevent server from changing player's position
-  return false
-end
-```
-##### Adding your own packet handler
-```lua
-local sampev = require 'samp.events'
-local raknet = require 'samp.raknet'
-sampev.INTERFACE.INCOMING_RPCS[raknet.RPC.PLAYSOUND] = {'onPlaySound', {soundId = 'int32'}, {coordinates = 'vector3d'}}
+## What goes here
 
-function sampev.onPlaySound(sound, coords)
-  -- add log message
-  print(string.format('Sound %d at coords %0.2f, %0.2f, %0.2f', sound, coords.x, coords.y, coords.z))
-  -- and mute sound
-  return false
-end
-```
-The same way you can add your own types for more complex packet structures. See source code for more information and examples.
+These are actual Lua libraries — not documentation. Scripts in `examples/` and your own scripts can `require` these directly once placed in `moonloader/lib/`.
+
+Common libraries you'll find here:
+
+| File / Folder | Require | Description |
+|---------------|---------|-------------|
+| `samp/` | `require 'samp.events'` | SA-MP event hooks — part of [SAMP.Lua](https://github.com/THE-FYP/SAMP.Lua) |
+| `samp/` | `require 'samp.raknet'` | RPC/Packet ID constants — part of [SAMP.Lua](https://github.com/THE-FYP/SAMP.Lua) |
+| `mimgui/` | `require 'mimgui'` | Dear ImGui bindings for MoonLoader by FYP |
+| `vkeys.lua` | `require 'vkeys'` | Virtual key constants (VK_F1, VK_RETURN, etc.) |
+| `encoding.lua` | `require 'encoding'` | UTF-8 / Cyrillic string encoding helpers |
+| `inicfg.lua` | `require 'inicfg'` | INI config file read/write |
+| `sampapi/` | `require 'sampapi'` | SA-MP memory structures via FFI — [SAMP-API.lua](https://github.com/imring/SAMP-API.lua) |
+
+> This list is illustrative — the actual files present depend on what has been added to this folder.
+
+---
+
+## Official sources
+
+| Library | Author | Download |
+|---------|--------|----------|
+| SAMP.Lua (samp.events, samp.raknet) | THE-FYP / BlastHack | [github.com/THE-FYP/SAMP.Lua](https://github.com/THE-FYP/SAMP.Lua/releases) |
+| mimgui | FYP | [luarocks.org/m/moonloader](https://luarocks.org/m/moonloader) |
+| SAMP-API.lua | imring | [github.com/imring/SAMP-API.lua](https://github.com/imring/SAMP-API.lua) |
+| SF.lua | SF-lua | [github.com/SF-lua/SF.lua](https://github.com/SF-lua/SF.lua) |
+| vkeys, encoding, inicfg | FYP | bundled with MoonLoader 026 installer |
+
+---
 
 ## Installation
-Copy the entire folder `samp` into the `moonloader/lib/` directory.
 
-## Links
-MoonLoader: http://blast.hk/moonloader/  
-Official thread at BlastHack: http://blast.hk/threads/14624/
+```
+moonloader/
+└── lib/               ← everything in this folder goes here
+    ├── samp/
+    │   ├── events.lua
+    │   ├── raknet.lua
+    │   └── ...
+    ├── mimgui/
+    │   └── ...
+    ├── vkeys.lua
+    ├── encoding.lua
+    └── inicfg.lua
+```
 
-## Credits
-[FYP](https://github.com/THE-FYP), [MISTER_GONWIK](https://github.com/MISTERGONWIK) and contributors.
+---
+
+*Maintained by MST Community — [discord.gg/mst-community](https://discord.com/invite/mst-community-1257189867020881962)*
