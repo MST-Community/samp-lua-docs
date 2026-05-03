@@ -5,9 +5,9 @@
 > All documentation is structured to be consumed directly by language models via Context7 or raw URL.
 
 [![Discord](https://img.shields.io/badge/Discord-MST%20Community-5865F2?logo=discord&logoColor=white)](https://discord.com/invite/mst-community-1257189867020881962)
-[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
-[![SA-MP](https://img.shields.io/badge/SA--MP-0.3.7--R5-blue)]()
-[![MoonLoader](https://img.shields.io/badge/MoonLoader-0.26%2B-orange)]()
+[![License](https://img.shields.io/badge/license-MIT-green)](https://github.com/MST-Community/samp-lua-docs/blob/main/LICENSE)
+[![SA-MP](https://img.shields.io/badge/SA--MP-0.3.7--R5-blue)](https://github.com/MST-Community/samp-lua-docs/blob/main)
+[![MoonLoader](https://img.shields.io/badge/MoonLoader-026--beta-orange)](https://blast.hk/threads/13305/)
 
 ---
 
@@ -15,8 +15,8 @@
 
 **Modding Samp Team** is an online community dedicated to advanced GTA San Andreas and SA-MP modding.
 
-- 💬 Discord: [discord.com/invite/mst-community-1257189867020881962](https://discord.com/invite/mst-community-1257189867020881962)
-- 👥 3500+ members
+* 💬 Discord: [discord.com/invite/mst-community-1257189867020881962](https://discord.com/invite/mst-community-1257189867020881962)
+* 👥 3500+ members
 
 ---
 
@@ -25,10 +25,12 @@
 This repo is a **knowledge base for MoonLoader/SA-MP Lua scripting**, maintained by MST Community and designed so that AI models can read it and generate accurate, working scripts without hallucinating functions that don't exist.
 
 It covers:
-- Core libraries: `samp.events`, `samp.raknet`, `mimgui`, `moonloader`, `sampfuncs`
-- RPC IDs and bitstream field layouts
-- Annotated example scripts
-- A ready-to-use base prompt for Claude
+
+* Core libraries: `samp.events`, `samp.raknet`, `mimgui`, `moonloader`, `sampfuncs`
+* RPC IDs and bitstream field layouts
+* Real Lua libraries and scripts from the SA-MP community (`lib/`)
+* Annotated example scripts
+* A ready-to-use base prompt for Claude
 
 ---
 
@@ -38,7 +40,7 @@ It covers:
 samp-lua-docs/
 ├── README.md                  ← you are here
 │
-├── libs/                      ← library documentation
+├── libs/                      ← library documentation (markdown references)
 │   ├── samp.events.md         ← event hooks (onSendChat, onServerMessage, etc.)
 │   ├── samp.raknet.md         ← RPC/packet ID constants
 │   ├── mimgui.md              ← Dear ImGui bindings for MoonLoader
@@ -48,13 +50,14 @@ samp-lua-docs/
 ├── rpc/
 │   └── rpc_ids.md             ← full SA-MP 0.3.7 RPC ID table + bitstream layouts
 │
+├── lib/                       ← real .lua library files from the SA-MP community
+│   └── ...                    ← drop these into moonloader/lib/ to use them
+│
 ├── examples/                  ← real working scripts, fully commented
-│   ├── chat_talk_anim.lua     ← plays animation when player sends chat message
-│   ├── basic_menu.lua         ← simple mimgui menu skeleton
-│   └── auto_message.lua       ← periodic chat message sender
+│   └── chat_talk_anim.lua     ← plays animation when player sends chat message
 │
 └── prompt/
-    └── base_prompt.md         ← copy-paste prompt for Claude with instructions
+    └── base_prompt.md         ← copy-paste prompt for Claude with full instructions
 ```
 
 ---
@@ -74,9 +77,9 @@ If you have Context7 configured as an MCP server in Cursor or another editor:
 Paste the raw URL of any file directly into your Claude conversation:
 
 ```
-https://raw.githubusercontent.com/YOUR_USERNAME/samp-lua-docs/main/libs/samp.events.md
-https://raw.githubusercontent.com/YOUR_USERNAME/samp-lua-docs/main/rpc/rpc_ids.md
-https://raw.githubusercontent.com/YOUR_USERNAME/samp-lua-docs/main/prompt/base_prompt.md
+https://raw.githubusercontent.com/MST-Community/samp-lua-docs/main/libs/samp.events.md
+https://raw.githubusercontent.com/MST-Community/samp-lua-docs/main/rpc/rpc_ids.md
+https://raw.githubusercontent.com/MST-Community/samp-lua-docs/main/prompt/base_prompt.md
 ```
 
 Claude can read raw GitHub URLs natively — no tools required.
@@ -91,23 +94,35 @@ Open `prompt/base_prompt.md`, copy its contents, and paste it at the start of yo
 
 Scripts in this repo target:
 
-| Dependency   | Version         | Required |
-|--------------|-----------------|----------|
-| MoonLoader   | 0.26+           | ✅ yes   |
-| SA-MP        | 0.3.7-R5        | ✅ yes   |
-| SAMP.Lua     | 2.3.0+          | ✅ yes   |
-| SAMPFUNCS    | 5.x             | ✅ yes   |
-| mimgui       | latest          | optional |
+| Dependency | Version    | Required | Download |
+|------------|------------|----------|----------|
+| GTA SA     | 1.0 US     | ✅ yes   | — |
+| SA-MP      | 0.3.7-R5   | ✅ yes   | [sa-mp.com](https://www.sa-mp.com) |
+| MoonLoader | 026-beta   | ✅ yes   | [blast.hk/threads/13305](https://blast.hk/threads/13305/) |
+| SAMPFUNCS  | 5.7.1      | ✅ yes   | [blast.hk/threads/17](https://blast.hk/threads/17/) |
+| SAMP.Lua   | 2.3.0      | ✅ yes   | [github.com/THE-FYP/SAMP.Lua](https://github.com/THE-FYP/SAMP.Lua/releases) |
+| mimgui     | latest     | optional | [luarocks.org/m/moonloader](https://luarocks.org/m/moonloader) |
+
+> ⚠️ MoonLoader uses **LuaJIT 2.1.0-beta3** as its Lua runtime — not standard PUC-Rio Lua.  
+> Scripts must be compatible with **Lua 5.1** syntax (LuaJIT also supports some 5.2/5.3 extensions via FFI).
 
 ---
 
 ## Installing dependencies
 
 ```
-moonloader/lib/samp/events.lua   ← from github.com/THE-FYP/SAMP.Lua
-moonloader/lib/samp/raknet.lua   ← same repo
-moonloader/lib/mimgui/           ← from blast.hk/threads/mimgui
-SAMPFUNCS.asi                    ← from blast.hk/attachments/22939
+# MoonLoader — run the installer or extract manually
+setup-moonloader-026.exe        ← blast.hk/moonloader/files/setup-moonloader-026.exe
+
+# SAMPFUNCS — copy the correct .asi for your SA-MP version into the game root
+SAMPFUNCS.asi                   ← blast.hk/threads/17/ (version 5.7.1)
+
+# SAMP.Lua — copy the samp/ folder into moonloader/lib/
+moonloader/lib/samp/events.lua  ← github.com/THE-FYP/SAMP.Lua/releases (v2.3.0)
+moonloader/lib/samp/raknet.lua  ← same release
+
+# mimgui — copy the mimgui/ folder into moonloader/lib/
+moonloader/lib/mimgui/          ← luarocks.org/m/moonloader (mimgui by FYP)
 ```
 
 ---
@@ -115,19 +130,12 @@ SAMPFUNCS.asi                    ← from blast.hk/attachments/22939
 ## Contributing
 
 Feel free to open a PR to add:
-- New library documentation
-- Fixed or improved example scripts
-- Additional RPC layouts
 
----
-
-## Contributing
-
-This repo is maintained by MST Community members. Feel free to open a PR to add:
-- New library documentation
-- Fixed or improved example scripts
-- Additional RPC layouts
-- Corrections to existing docs
+* Real `.lua` library files for the `lib/` folder
+* New library documentation in `libs/`
+* Fixed or improved example scripts
+* Additional RPC layouts
+* Corrections to existing docs
 
 Join our Discord to discuss before submitting large changes.
 
@@ -135,10 +143,10 @@ Join our Discord to discuss before submitting large changes.
 
 ## Credits
 
-- **MST Community** — repo maintenance and example scripts
-- **THE-FYP / BlastHack Team** — MoonLoader, SAMP.Lua
-- **MISTER_GONWIK** — SAMP.Lua contributions
-- **BlastHack community** — blast.hk
+* **MST Community** — repo maintenance and example scripts
+* **THE-FYP / BlastHack Team** — MoonLoader, SAMP.Lua, mimgui, SAMPFUNCS
+* **MISTER_GONWIK** — SAMP.Lua contributions
+* **BlastHack community** — blast.hk
 
 ---
 
